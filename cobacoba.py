@@ -47,18 +47,50 @@ if page == "Introduction":
             st.image(img3, use_container_width=True)
 
 # Halaman List Barang
-elif page == "List Barang":
-    st.title("Daftar Barang")
-    barang = [
-        {"nama": "Laptop", "harga": 10000000},
-        {"nama": "Mouse", "harga": 150000},
-        {"nama": "Keyboard", "harga": 300000},
-        {"nama": "Monitor", "harga": 2000000}
-    ]
+elif page == "Project":
+    # st.title("Daftar Barang")
+    # barang = [
+    #     {"nama": "Laptop", "harga": 10000000},
+    #     {"nama": "Mouse", "harga": 150000},
+    #     {"nama": "Keyboard", "harga": 300000},
+    #     {"nama": "Monitor", "harga": 2000000}
+    # ]
     
-    for b in barang:
-        st.subheader(b["nama"])
-        st.write(f"Harga: Rp {b['harga']:,}")
+    # for b in barang:
+    #     st.subheader(b["nama"])
+    #     st.write(f"Harga: Rp {b['harga']:,}")
+    # st.markdown("""
+    # <style>
+    #     .top-container {
+    #         height: 20vh;
+    #         display: flex;
+    #         justify-content: center;
+    #         align-items: center;
+    #         background-color: #F1F1F1;
+    #         text-align: center;
+    #     }
+    #     .top-container img {
+    #         max-width: 100%;
+    #         max-height: 800%;
+    #     }
+    # </style>
+    # """, unsafe_allow_html=True)
+
+    # Bagian atas (gambar banner + caption)
+    with st.container():
+        st.markdown('<div class="top-container">', unsafe_allow_html=True)
+        # Menampilkan gambar banner
+        # st.image("medical.jpg", caption="This is the banner caption", use_container_width=True)
+        st.image("red.jpg", width=1000)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Bagian bawah (dinamis)
+    with st.container():
+        st.header("Dynamic Bottom Container")
+        st.write("This is the bottom container. You can add dynamic content here.")
+        # Menambahkan beberapa konten dinamis
+        for i in range(1, 6):
+            st.write(f"Dynamic content line {i}")
 
 # Halaman Alamat
 elif page == "Alamat":
