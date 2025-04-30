@@ -1,36 +1,141 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Contoh data
-data = {
-    'Age': [25, 30, 45, 50, 60, 70, 80, 55, 40, 35],
-    'Admission Type': ['Emergency', 'Scheduled', 'Scheduled', 'Emergency', 'Emergency', 
-                       'Scheduled', 'Emergency', 'Scheduled', 'Emergency', 'Scheduled'],
-    'Length of Stay (Days)': [5, 3, 10, 8, 7, 4, 6, 5, 9, 3],
-}
+def visualisasi_project():
+    # --- 1. Load dataset ---
+    # Ganti 'your_dataset.csv' dengan path file lokalmu
+    df = pd.read_csv('dataset.csv')
 
-df = pd.DataFrame(data)
+    # --- 2. Ambil kolom yang dibutuhkan ---
+    # Ganti nama kolom sesuai dengan nama di dataset asli
+    required_columns = ['Billing Amount', 'Insurance Provider', 'Medical Condition']
+    data = df[required_columns].copy()
 
-# Sidebar filter untuk memilih Admission Type
-admission_type = st.sidebar.selectbox('Select Admission Type', df['Admission Type'].unique())
+    # Optional: Bersihkan missing value jika ada
+    data.dropna(subset=required_columns, inplace=True)
 
-# Filter data berdasarkan pilihan Admission Type
-filtered_data = df[df['Admission Type'] == admission_type]
+    # # --- 3. Sidebar Filter ---
+    # # st.sidebar.title("🔍 Filter")
+    # selected_condition = st.sidebar.selectbox("Pilih Jenis Penyakit:", data['Medical Condition'].unique())
 
-# Judul
-st.title('Length of Stay (Durasi Rawat Inap)')
+    # # --- 4. Filter data sesuai pilihan ---
+    # filtered_data = data[data['Medical Condition'] == selected_condition]
 
-# Tampilkan data yang sudah difilter
-st.write(f"Showing data for {admission_type} admissions:")
-st.write(filtered_data)
+    # # --- 5. Hitung rata-rata biaya berdasarkan asuransi ---
+    # grouped_data = filtered_data.groupby('Insurance Provider')['Billing Amount'].mean().reset_index()
 
-# Visualisasi
-fig, ax = plt.subplots()
-sns.boxplot(x='Admission Type', y='Length of Stay (Days)', data=filtered_data, ax=ax)
-ax.set_title(f'Duration of Stay for {admission_type} Admissions')
-st.pyplot(fig)
+    # # --- 6. Tampilkan visualisasi ---
+    # st.title("📊 Rata-rata Biaya Berdasarkan Asuransi dan Jenis Penyakit")
+    # st.subheader(f"Jenis Penyakit: {selected_condition}")
 
-# Saran untuk analisis lanjutan
-st.write("You can explore different Admission Types using the filter on the sidebar.")
+    # chart = alt.Chart(grouped_data).mark_bar().encode(
+    #     x='Insurance Provider',
+    #     y='Billing Amount',
+    #     # y=alt.Y('Billing Amount', scale=alt.Scale(domain=(20000, grouped_data['Billing Amount'].max()))),
+    #     tooltip=['Insurance Provider', 'Billing Amount']
+    # ).properties(
+    #     width=600,
+    #     height=400
+    # )
+
+    # st.altair_chart(chart, use_container_width=True)
+    
+    # Sidebar filter
+    # st.sidebar.title("🔎 Filter Data")
+    # selected_condition = st.sidebar.selectbox(
+    #     "Pilih Jenis Penyakit (Medical Condition):",
+    #     options=sorted(data['Medical Condition'].unique())
+    # )
+
+    # # Filter data berdasarkan kondisi yang dipilih
+    # filtered_data = data[data['Medical Condition'] == selected_condition]
+
+    # # Hitung rata-rata Billing Amount per Insurance Provider
+    # grouped_data = (
+    #     filtered_data.groupby('Insurance Provider')['Billing Amount']
+    #     .mean()
+    #     .reset_index()
+    #     .sort_values(by='Billing Amount', ascending=False)
+    # )
+
+    # # Visualisasi
+    # chart = alt.Chart(grouped_data).mark_bar().encode(
+    #     x=alt.X('Insurance Provider', sort='-y'),
+    #     y=alt.Y('Billing Amount',
+    #         title='Rata-rata Biaya Ditanggung',
+    #         scale=alt.Scale(domain=[25000, 26000])),
+    #     # y=alt.Y('Billing Amount', title='Rata-rata Biaya Ditanggung'),
+    #     tooltip=['Insurance Provider', 'Billing Amount']
+    # ).properties(
+    #     title=f"Rata-rata Biaya Ditanggung per Asuransi untuk Penyakit '{selected_condition}'",
+    #     width=700,
+    #     height=400
+    # )
+
+    # # Tampilkan di Streamlit
+    # st.title("📊 Visualisasi Biaya Ditanggung Asuransi")
+    # st.altair_chart(chart, use_container_width=True)
+
+    medical_condition = st.selectbox(
+        'Pilih Kondisi Medis:',
+        sorted(data['Medical Condition'].unique().tolist())
+    )
+
+    # Filter data berdasarkan kondisi medis
+    data_filtered = data[data['Medical Condition'] == medical_condition]
+
+    # 5. Hitung frekuensi masing-masing jenis asuransi berdasarkan kondisi medis yang dipilih
+    insurance_counts = data_filtered['Insurance Provider'].value_counts()
+
+    # if insurance_counts.empty:
+    #     st.write("Tidak ada data yang sesuai dengan kondisi medis yang dipilih.")
+    # else:
+    #     # 6. Visualisasi: Grafik batang (bar chart)
+    #     plt.figure(figsize=(10, 6))
+    #     sns.barplot(x=insurance_counts.index, y=insurance_counts.values, palette='viridis')
+
+    #     plt.ylim(bottom=1700)
+
+    #     # Menambahkan label dan judul
+    #     plt.title(f'Frekuensi Penggunaan Asuransi untuk Kondisi Medis: {medical_condition}', fontsize=16)
+    #     plt.xlabel('Provider Asuransi', fontsize=12)
+    #     plt.ylabel('Jumlah Penggunaan', fontsize=12)
+
+    #     # Putar label pada sumbu X agar lebih mudah dibaca
+    #     plt.xticks(rotation=45, ha='right')
+
+    #     # Tampilkan grafik
+    #     st.pyplot(plt)
+
+    if insurance_counts.empty:
+        st.write("Tidak ada data yang sesuai dengan kondisi medis yang dipilih.")
+    else:
+        # Tampilkan nama asuransi yang paling sering digunakan
+        top_insurance = insurance_counts.idxmax()
+        top_count = insurance_counts.max()
+        st.success(f"🔎 Provider asuransi yang paling sering digunakan untuk kondisi **{medical_condition}** adalah **{top_insurance}** sebanyak **{top_count}** kali.")
+
+        # Visualisasi: Grafik batang (bar chart)
+        plt.figure(figsize=(10, 6))
+        ax = sns.barplot(x=insurance_counts.index, y=insurance_counts.values, palette='viridis')
+
+        # Menambahkan label jumlah di atas tiap batang
+        for i, v in enumerate(insurance_counts.values):
+            ax.text(i, v + 50, str(v), color='black', ha='center', fontweight='bold')
+
+        # Hilangkan sumbu Y
+        ax.get_yaxis().set_visible(False)
+
+        plt.ylim(bottom=1700)
+
+        # Menambahkan label dan judul
+        plt.title(f'Frekuensi Penggunaan Asuransi untuk Kondisi Medis: {medical_condition}', fontsize=16)
+        plt.xlabel('Provider Asuransi', fontsize=12)
+        plt.ylabel('')
+        plt.xticks(rotation=45, ha='right')
+
+        # Tampilkan grafik
+        st.pyplot(plt)

@@ -81,16 +81,27 @@ elif page == "Project":
         st.markdown('<div class="top-container">', unsafe_allow_html=True)
         # Menampilkan gambar banner
         # st.image("medical.jpg", caption="This is the banner caption", use_container_width=True)
-        st.image("red.jpg", width=1000)
+        img = Image.open("red.jpg")
+        img_resized = img.resize((1000, 200))  # Resize to width=1000, height=300
+
+        st.image(img_resized)
+        # st.image("red.jpg", width=1000, height=300)
+        # st.markdown('<img src="red.jpg" alt="Red Image" width="600" height="400">', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
+
+        st.header("Healthcare dataset analysis")
+        st.write("Pada proyek ini, saya menggunakan dataset Healthcare dari Kaggle untuk menganalisis provider asuransi yang paling sering digunakan berdasarkan kondisi medis. " \
+        "Selanjutnya, penelitian ini akan mengevaluasi apakah provider yang paling sering digunakan tersebut memang merupakan pilihan terbaik untuk masing-masing kondisi medis.")
 
     # Bagian bawah (dinamis)
     with st.container():
-        st.header("Dynamic Bottom Container")
-        st.write("This is the bottom container. You can add dynamic content here.")
-        # Menambahkan beberapa konten dinamis
-        for i in range(1, 6):
-            st.write(f"Dynamic content line {i}")
+        import project
+        project . visualisasi_project()
+        # st.header("Dynamic Bottom Container")
+        # st.write("This is the bottom container. You can add dynamic content here.")
+        # # Menambahkan beberapa konten dinamis
+        # for i in range(1, 6):
+        #     st.write(f"Dynamic content line {i}")
 
 # Halaman Alamat
 elif page == "Alamat":
